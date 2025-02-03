@@ -1,40 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import ListingCard from './ListingCard';
-import { supabase } from '../supabaseClient';
-
-
-async function fetchListingsFromDB() {
-  try {
-    const { data, error } = await supabase
-      .from('listings')
-      .select('*')
-      .order('id', { ascending: false });
-
-    if (error) {
-      throw error;
-    }
-    return data || [];
-  } catch (error) {
-    console.error('Error fetching listings:', error);
-    return [];
-  }
-}
-
 
 function FeaturedListings() {
-  const [listings, setListings] = useState([]);
-
-  useEffect(() => {
-    fetchListings();
-  }, []);
-
-  const fetchListings = async () => {
-    const fetchedListings = await fetchListingsFromDB();
-    if (fetchedListings) {
-      setListings(fetchedListings);
-    }
-  };
-
+  const listings = []; // Changed to empty array for now
 
   return (
     <section className="py-12 bg-gray-50">

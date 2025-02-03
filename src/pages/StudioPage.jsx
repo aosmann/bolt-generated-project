@@ -2,24 +2,24 @@ import React, { useState, useEffect } from 'react';
 import ListingCard from '../components/ListingCard';
 import EditListingForm from '../components/EditListingForm';
 import { supabase } from '../supabaseClient';
-import AddListingForm from '../components/AddListingForm';
+import AddListingForm from '../components/AddListingForm'; // Import AddListingForm
 
 async function fetchListingsFromDB() {
   try {
-    console.log("StudioPage: fetchListingsFromDB - Fetching listings from Supabase...");
+    console.log("StudioPage: fetchListingsFromDB - Fetching listings from Supabase..."); // Log fetch start
     const { data, error } = await supabase
       .from('listings')
       .select('*')
       .order('id', { ascending: false });
 
     if (error) {
-      console.error("StudioPage: fetchListingsFromDB - Error fetching listings:", error);
+      console.error("StudioPage: fetchListingsFromDB - Error fetching listings:", error); // Log error
       throw error;
     }
-    console.log("StudioPage: fetchListingsFromDB - Listings fetched successfully:", data);
+    console.log("StudioPage: fetchListingsFromDB - Listings fetched successfully:", data); // Log success and data
     return data || [];
   } catch (error) {
-    console.error('StudioPage: fetchListingsFromDB - General error:', error);
+    console.error('StudioPage: fetchListingsFromDB - General error:', error); // Log general error
     return [];
   }
 }
@@ -27,17 +27,18 @@ async function fetchListingsFromDB() {
 async function addListingToDB(listingData) {
   try {
     console.log("StudioPage: Data received in addListingToDB:", listingData);
+    // Reverted to full insert - including all columns
     const insertData = {
       title: listingData.title,
       price: listingData.price,
       propertyType: listingData.propertyType,
-      location: listingData.location,
       description: listingData.description,
       thumbnailImage: listingData.thumbnailImage,
       propertyImages: listingData.propertyImages,
       rooms: listingData.rooms,
       bathrooms: listingData.bathrooms,
       squareFeet: listingData.squareFeet,
+      location: listingData.location,
       features: listingData.features,
     };
     console.log("StudioPage: Full data being sent to Supabase for insertion:", insertData);
@@ -97,6 +98,7 @@ async function deleteListingFromDB(id) {
   }
 }
 
+
 function StudioPage() {
   const [listings, setListings] = useState([]);
   const [editingListingId, setEditingListingId] = useState(null);
@@ -125,6 +127,7 @@ function StudioPage() {
       setListings(fetchedListings);
     }
   };
+
 
   const deleteListing = async (id) => {
     const success = await deleteListingFromDB(id);
@@ -162,10 +165,10 @@ function StudioPage() {
     setNewListing({ ...newListing, [e.target.name]: e.target.value });
   };
 
-  const handleAddListing = async (e) => {
-    e.preventDefault();
-    const formattedPrice = `$${parseFloat(newListing.price.replace(/[^0-9.]/g, '')).toLocaleString()}`;
-    const finalNewListing = { ...newListing, price: formattedPrice };
+  const handleAddListing = async (listingDataFromForm) => { // Receive listingData from AddListingForm
+    console.log("StudioPage: handleAddListing called with data:", listingDataFromForm); // Log received data
+    const formattedPrice = `$${parseFloat(listingDataFromForm.price.replace(/[^0-9.]/g, '')).toLocaleString()}`;
+    const finalNewListing = { ...listingDataFromForm, price: formattedPrice };
 
     console.log("StudioPage: Formatted listing data to be added:", finalNewListing);
 
@@ -199,8 +202,9 @@ function StudioPage() {
 
   const cancelAddProperty = () => {
     setIsAddingNew(false);
-    setIsAddingNew(false);
+    setIsAddingNew(false); // Also close modal on cancel
   };
+
 
   return (
     <div className="bg-gray-50 min-h-screen">
@@ -214,7 +218,7 @@ function StudioPage() {
             <h1 className="text-2xl font-bold text-gray-800">LuxuryEstates Studio</h1>
           </div>
           <div>
-            <button className="text-primary hover:text-primary-700">→ Sign Out</button>
+            <button className="text-blue-500 hover:text-blue-700">→ Sign Out</button>
           </div>
         </div>
         <div className="container mx-auto mt-2">
@@ -227,7 +231,7 @@ function StudioPage() {
         <section className="mb-8">
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-xl font-semibold text-gray-700">Property Types</h2>
-            <button className="bg-primary hover:bg-primary-700 text-white font-bold py-2 px-4 rounded">
+            <button className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
               + Add Type
             </button>
           </div>
@@ -235,33 +239,11 @@ function StudioPage() {
             <ul>
               <li className="px-4 py-3 border-b flex justify-between items-center hover:bg-gray-100">
                 <span>Home</span>
-                <div>
-                  <button className="text-blue-500 hover:text-blue-700 mr-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-4 h-4 inline-block align-middle">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm-6.979 7.707a2.25 2.25 0 1 1 3.182 3.182l-1.727 1.728a3.75 3.75 0 0 0-5.304-5.304l1.727-1.728Z" />
-                    </svg>
-                  </button>
-                  <button className="text-red-500 hover:text-red-700">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-4 h-4 inline-block align-middle">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="m14.74 14.74-2.87-2.87m0 0A2.4 2.4 0 0 1 12 10.75c3.45-.523 6.533-2.7 7.886-5.346a1.2 1.2 0 1 0-1.737-1.342c-.476.588-1.285 1.504-1.977 2.255m-5.232 5.232L17.27 7.73m0 0a2.4 2.4 0 0 1 1.7-4.1c-3.45.523-6.533 2.7-7.886-5.346a1.2 1.2 0 1 0 1.737 1.342c.476-.588-1.285 1.504-1.977 2.255m-5.232 5.232 2.87 2.87" />
-                    </svg>
-                  </button>
-                </div>
+                {/* ... */}
               </li>
               <li className="px-4 py-3 border-b flex justify-between items-center hover:bg-gray-100">
                 <span>Land</span>
-                <div>
-                  <button className="text-blue-500 hover:text-blue-700 mr-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-4 h-4 inline-block align-middle">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm-6.979 7.707a2.25 2.25 0 1 1 3.182 3.182l-1.727 1.728a3.75 3.75 0 0 0-5.304-5.304l1.727-1.728Z" />
-                    </svg>
-                  </button>
-                  <button className="text-red-500 hover:text-red-700">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-4 h-4 inline-block align-middle">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="m14.74 14.74-2.87-2.87m0 0A2.4 2.4 0 0 1 12 10.75c3.45-.523 6.533-2.7 7.886-5.346a1.2 1.2 0 1 0-1.737-1.342c-.476.588-1.285 1.504-1.977 2.255m-5.232 5.232L17.27 7.73m0 0a2.4 2.4 0 0 1 1.7-4.1c-3.45.523-6.533 2.7-7.886-5.346a1.2 1.2 0 1 0 1.737 1.342c.476-.588-1.285 1.504-1.977 2.255m-5.232 5.232 2.87 2.87" />
-                    </svg>
-                  </button>
-                </div>
+                {/* ... */}
               </li>
             </ul>
           </div>
@@ -273,7 +255,7 @@ function StudioPage() {
             <h2 className="text-xl font-semibold text-gray-700">Manage your property listings and types</h2>
             <button
               onClick={startAddProperty}
-              className="bg-primary hover:bg-primary-700 text-white font-bold py-2 px-4 rounded"
+              className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
             >
               + Add Property
             </button>

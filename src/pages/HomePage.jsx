@@ -7,6 +7,9 @@ function HomePage() {
     <div>
       <Hero />
       <FeaturedListings />
+      <div className="bg-white p-4 rounded-md mt-8">
+        <p>This is a test shadow.</p>
+      </div>
     </div>
   );
 }
