@@ -13,9 +13,9 @@ function AddListingForm({ onAdd, onCancel }) {
   const [location, setLocation] = useState('');
   const [features, setFeatures] = useState('');
 
-  const handleSubmit = (e) => { // Ensure 'e' is received as the event object
+  const handleSubmit = (e) => {
     e.preventDefault();
-    onAdd({
+    const listingData = { // Create listingData object here for logging
       title,
       price,
       propertyType,
@@ -27,7 +27,12 @@ function AddListingForm({ onAdd, onCancel }) {
       squareFeet,
       location,
       features
-    });
+    };
+
+    console.log("AddListingForm: Data being submitted from form:", listingData); // Log data from form
+
+    onAdd(listingData);
+
     setTitle('');
     setPrice('');
     setPropertyType('Home');
@@ -43,8 +48,8 @@ function AddListingForm({ onAdd, onCancel }) {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="bg-white rounded px-8 pt-6 pb-8 mb-4"> {/* Removed shadow-md and container class */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4"> {/* 2-column grid */}
+    <form onSubmit={handleSubmit} className="bg-white rounded px-8 pt-6 pb-8 mb-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
         <div className="mb-4 md:col-span-1">
           <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="title">
             Title
@@ -101,7 +106,7 @@ function AddListingForm({ onAdd, onCancel }) {
             required
           />
         </div>
-        <div className="mb-4 md:col-span-2"> {/* Full width for description */}
+        <div className="mb-4 md:col-span-2">
           <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="description">
             Description
           </label>
@@ -168,7 +173,7 @@ function AddListingForm({ onAdd, onCancel }) {
             onChange={(e) => setFeatures(e.target.value)}
           />
         </div>
-        <div className="mb-4 md:col-span-2"> {/* Full width for images */}
+        <div className="mb-4 md:col-span-2">
           <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="thumbnailImage">
             Thumbnail Image URL
           </label>
@@ -196,7 +201,7 @@ function AddListingForm({ onAdd, onCancel }) {
           />
         </div>
       </div>
-      <div className="flex items-center justify-end"> {/* Aligned buttons to the right */}
+      <div className="flex items-center justify-end">
         <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mr-2" type="submit">
           Add Listing
         </button>

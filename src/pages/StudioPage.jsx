@@ -23,7 +23,7 @@ async function fetchListingsFromDB() {
 
 async function addListingToDB(listingData) {
   try {
-    console.log("Data being sent to Supabase for insertion:", listingData);
+    console.log("StudioPage: Data received in addListingToDB:", listingData); // Log received data
     const { data, error } = await supabase
       .from('listings')
       .insert([listingData])
@@ -31,14 +31,14 @@ async function addListingToDB(listingData) {
       .single();
 
     if (error) {
-      console.error("Supabase insert error details:", error);
+      console.error("StudioPage: Supabase insert error details:", error);
       throw error;
     }
 
-    console.log("Successfully inserted listing, Supabase response:", data);
+    console.log("StudioPage: Successfully inserted listing, Supabase response:", data);
     return data;
   } catch (error) {
-    console.error('Error in addListingToDB function:', error.message, error);
+    console.error('StudioPage: Error in addListingToDB function:', error.message, error);
     return null;
   }
 }
@@ -146,16 +146,16 @@ function StudioPage() {
     setNewListing({ ...newListing, [e.target.name]: e.target.value });
   };
 
-  const handleAddListing = async (e) => {
-    e.preventDefault();
-    const formattedPrice = `$${parseFloat(newListing.price.replace(/[^0-9.]/g, '')).toLocaleString()}`;
-    const finalNewListing = { ...newListing, price: formattedPrice };
+  const handleAddListing = async (listingDataFromForm) => { // Receive listingData from AddListingForm
+    console.log("StudioPage: handleAddListing called with data:", listingDataFromForm); // Log received data
+    const formattedPrice = `$${parseFloat(listingDataFromForm.price.replace(/[^0-9.]/g, '')).toLocaleString()}`;
+    const finalNewListing = { ...listingDataFromForm, price: formattedPrice };
 
-    console.log("Formatted listing data to be added:", finalNewListing);
+    console.log("StudioPage: Formatted listing data to be added:", finalNewListing);
 
     const addedListing = await addListingToDB(finalNewListing);
     if (addedListing) {
-      console.log("New listing added successfully:", addedListing);
+      console.log("StudioPage: New listing added successfully:", addedListing);
       setListings([...listings, addedListing]);
       setIsAddingNew(false);
       setNewListing({
@@ -172,7 +172,7 @@ function StudioPage() {
         features: '',
       });
     } else {
-      console.error('handleAddListing: Failed to add listing to database.');
+      console.error('StudioPage: handleAddListing: Failed to add listing to database.');
     }
   };
 
