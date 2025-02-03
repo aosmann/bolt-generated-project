@@ -6,27 +6,39 @@ import AddListingForm from '../components/AddListingForm'; // Import AddListingF
 
 async function fetchListingsFromDB() {
   try {
+    console.log("StudioPage: fetchListingsFromDB - Fetching listings from Supabase..."); // Log fetch start
     const { data, error } = await supabase
       .from('listings')
       .select('*')
       .order('id', { ascending: false });
 
     if (error) {
+      console.error("StudioPage: fetchListingsFromDB - Error fetching listings:", error); // Log error
       throw error;
     }
+    console.log("StudioPage: fetchListingsFromDB - Listings fetched successfully:", data); // Log success and data
     return data || [];
   } catch (error) {
-    console.error('Error fetching listings:', error);
+    console.error('StudioPage: fetchListingsFromDB - General error:', error); // Log general error
     return [];
   }
 }
 
 async function addListingToDB(listingData) {
   try {
-    console.log("StudioPage: Data received in addListingToDB:", listingData); // Log received data
+    console.log("StudioPage: Data received in addListingToDB:", listingData);
+    // Simplified insert - only include essential columns
+    const insertData = {
+      title: listingData.title,
+      price: listingData.price,
+      propertyType: listingData.propertyType,
+      location: listingData.location,
+    };
+    console.log("StudioPage: Simplified data being sent to Supabase for insertion:", insertData);
+
     const { data, error } = await supabase
       .from('listings')
-      .insert([listingData])
+      .insert([insertData])
       .select()
       .single();
 
@@ -220,33 +232,11 @@ function StudioPage() {
             <ul>
               <li className="px-4 py-3 border-b flex justify-between items-center hover:bg-gray-100">
                 <span>Home</span>
-                <div>
-                  <button className="text-blue-500 hover:text-blue-700 mr-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-4 h-4 inline-block align-middle">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm-6.979 7.707a2.25 2.25 0 1 1 3.182 3.182l-1.727 1.728a3.75 3.75 0 0 0-5.304-5.304l1.727-1.728Z" />
-                    </svg>
-                  </button>
-                  <button className="text-red-500 hover:text-red-700">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-4 h-4 inline-block align-middle">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="m14.74 14.74-2.87-2.87m0 0A2.4 2.4 0 0 1 12 10.75c3.45-.523 6.533-2.7 7.886-5.346a1.2 1.2 0 1 0-1.737-1.342c-.476.588-1.285 1.504-1.977 2.255m-5.232 5.232L17.27 7.73m0 0a2.4 2.4 0 0 1 1.7-4.1c-3.45.523-6.533 2.7-7.886-5.346a1.2 1.2 0 1 0 1.737 1.342c.476-.588-1.285 1.504-1.977 2.255m-5.232 5.232 2.87 2.87" />
-                    </svg>
-                  </button>
-                </div>
+                {/* ... */}
               </li>
               <li className="px-4 py-3 border-b flex justify-between items-center hover:bg-gray-100">
                 <span>Land</span>
-                <div>
-                  <button className="text-blue-500 hover:text-blue-700 mr-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-4 h-4 inline-block align-middle">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm-6.979 7.707a2.25 2.25 0 1 1 3.182 3.182l-1.727 1.728a3.75 3.75 0 0 0-5.304-5.304l1.727-1.728Z" />
-                    </svg>
-                  </button>
-                  <button className="text-red-500 hover:text-red-700">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-4 h-4 inline-block align-middle">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="m14.74 14.74-2.87-2.87m0 0A2.4 2.4 0 0 1 12 10.75c3.45-.523 6.533-2.7 7.886-5.346a1.2 1.2 0 1 0-1.737-1.342c-.476.588-1.285 1.504-1.977 2.255m-5.232 5.232L17.27 7.73m0 0a2.4 2.4 0 0 1 1.7-4.1c-3.45.523-6.533 2.7-7.886-5.346a1.2 1.2 0 1 0 1.737 1.342c.476-.588-1.285 1.504-1.977 2.255m-5.232 5.232 2.87 2.87" />
-                    </svg>
-                  </button>
-                </div>
+                {/* ... */}
               </li>
             </ul>
           </div>
@@ -264,19 +254,16 @@ function StudioPage() {
             </button>
           </div>
 
-
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {listings.map(listing => (
               <div key={listing.id}>
                 <ListingCard listing={listing} onDelete={deleteListing} onEdit={() => startEditListing(listing.id)} />
                 {editingListingId === listing.id && (
-                  <div className="fixed top-0 left-0 w-full h-full bg-gray-100 bg-opacity-75 flex justify-center items-center">
-                    <EditListingForm
-                      listing={listing}
-                      onUpdate={updateListing}
-                      onCancel={cancelEditListing}
-                    />
-                  </div>
+                  <EditListingForm
+                    listing={listing}
+                    onUpdate={updateListing}
+                    onCancel={cancelEditListing}
+                  />
                 )}
               </div>
             ))}
@@ -287,7 +274,7 @@ function StudioPage() {
       {/* Add Listing Modal */}
       {isAddingNew && (
         <div className="fixed top-0 left-0 w-full h-full bg-gray-500 bg-opacity-75 flex justify-center items-center">
-          <div className="bg-white rounded-lg p-8 w-full max-w-2xl max-h-screen overflow-y-auto"> {/* Removed h-full, added max-h-screen and overflow-y-auto */}
+          <div className="bg-white rounded-lg p-8 w-full max-w-2xl max-h-screen overflow-y-auto">
             <h2 className="text-2xl font-bold mb-4 text-gray-800">Add New Listing</h2>
             <AddListingForm onAdd={handleAddListing} onCancel={cancelAddProperty} />
           </div>
