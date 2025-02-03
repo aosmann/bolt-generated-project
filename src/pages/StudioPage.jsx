@@ -22,6 +22,7 @@ async function fetchListingsFromDB() {
 
 async function addListingToDB(listingData) {
   try {
+    console.log("Data being sent to Supabase for insertion:", listingData);
     const { data, error } = await supabase
       .from('listings')
       .insert([listingData])
@@ -29,11 +30,14 @@ async function addListingToDB(listingData) {
       .single();
 
     if (error) {
+      console.error("Supabase insert error details:", error);
       throw error;
     }
+
+    console.log("Successfully inserted listing, Supabase response:", data);
     return data;
   } catch (error) {
-    console.error('Error adding listing:', error);
+    console.error('Error in addListingToDB function:', error.message, error);
     return null;
   }
 }
@@ -145,8 +149,12 @@ function StudioPage() {
     e.preventDefault();
     const formattedPrice = `$${parseFloat(newListing.price.replace(/[^0-9.]/g, '')).toLocaleString()}`;
     const finalNewListing = { ...newListing, price: formattedPrice };
+
+    console.log("Formatted listing data to be added:", finalNewListing);
+
     const addedListing = await addListingToDB(finalNewListing);
     if (addedListing) {
+      console.log("New listing added successfully:", addedListing);
       setListings([...listings, addedListing]);
       setIsAddingNew(false);
       setNewListing({
@@ -163,7 +171,8 @@ function StudioPage() {
         features: '',
       });
     } else {
-      console.error('Failed to add listing');
+      console.error('handleAddListing: Failed to add listing to database.');
+      // Optionally, you could set some state to display an error message to the user here.
     }
   };
 
